@@ -14,7 +14,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module PushResolution
+module LogResolution
   Request = Google::Protobuf::DescriptorPool.generated_pool.lookup("push_resolution.Request").msgclass
 end
 end

@@ -8,11 +8,8 @@ class << self
 
     feature_def = features[feature_string]
     return false unless feature_def
-    return true if feature_def["enabled"]
 
-    base_rule = feature_def["rules"]
-    resolution = Rule.satisfied?(base_rule, meta)
-
+    resolution = feature_def["enabled"] ? true : Rule.satisfied?(feature_def.fetch("rules"), meta)
     Source.log_resolution(feature_symbol, meta, resolution)
 
     resolution

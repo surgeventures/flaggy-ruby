@@ -1,4 +1,5 @@
 require 'concurrent'
+require 'json'
 
 module Flaggy
 class ProteinSource
@@ -22,7 +23,16 @@ class ProteinSource
   end
 
   def log_resolution(feature, meta, resolution)
-    # todo
+    Client.push(LogResolution::Request.new(
+      app: get_app(),
+      feature: feature.to_s,
+      meta: JSON.dump(meta),
+      resolution: resolution
+    ))
+  end
+
+  def get_app
+    Source.get_opts().fetch(:app)
   end
 
   private
