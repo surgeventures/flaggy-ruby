@@ -1,4 +1,3 @@
-if defined?(Protein)
 module Flaggy
 class ProteinSource
 class Observer
@@ -11,7 +10,6 @@ class Observer
       print "(#{time}) Execution failed with error #{ex}\n"
     end
   end
-end
 end
 end
 end

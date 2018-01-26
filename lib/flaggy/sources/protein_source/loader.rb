@@ -1,4 +1,3 @@
-if defined?(Protein)
 module Flaggy
 class ProteinSource
 class Loader
@@ -12,7 +11,6 @@ class << self
       }
     }
   end
-end
 end
 end
 end
