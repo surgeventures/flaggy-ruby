@@ -51,6 +51,7 @@ Loads definition from JSON file. It's most useful for development.
 Flaggy.configure do |config|
   config.source = {
     type: :json,
+    eager_load: false,
     file: "path/to/definition.json"
   }
 end

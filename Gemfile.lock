@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    flaggy (0.1.0)
+      concurrent-ruby (>= 1.0.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    concurrent-ruby (1.0.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  flaggy!
+
+BUNDLED WITH
+   1.16.1

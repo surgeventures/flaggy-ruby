@@ -14,7 +14,7 @@ class << self
   end
 
   def reset
-    @type_instance = nil
+    @type_instance = get_type_class().new
   end
 
   def get_type_instance
