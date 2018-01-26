@@ -1,59 +1,43 @@
-require 'concurrent'
+if defined?(Protein)
+  require 'concurrent'
 
-module Flaggy
-class ProteinSource
-  class Loader
-    class << self
-      def call
-        sleep 5
+  module Flaggy
+  class ProteinSource
+    def initialize
+      transport_opts = Source.get_opts().fetch(:transport)
+      adapter = transport_opts.fetch(:adapter)
+      Client.transport(adapter, transport_opts)
 
-        {
-          "my_feature" => {
-            "enabled" => true
-          }
-        }
-      end
+      @features = {}
+      @loader_task = Concurrent::TimerTask.new(get_loader_opts()) { @features = Loader.call() }
+      @loader_task.add_observer(Observer.new)
+      @loader_task.execute
+    end
+
+    def get_features
+      @features
+    end
+
+    def update_features(&block)
+      raise("This source cannot be updated")
+    end
+
+    def log_resolution(feature, meta, resolution)
+      # todo
+    end
+
+    private
+
+    def get_loader_opts
+      {
+        execution_interval: get_refresh_interval(),
+        run_now: true,
+      }
+    end
+
+    def get_refresh_interval
+      Source.get_opts().fetch(:refresh_interval, 60_000) * 0.001
     end
   end
-
-  class Observer
-    def update(time, result, ex)
-      if result
-        print "(#{time}) Execution successfully returned #{result}\n"
-      elsif ex.is_a?(Concurrent::TimeoutError)
-        print "(#{time}) Execution timed out\n"
-      else
-        print "(#{time}) Execution failed with error #{ex}\n"
-      end
-    end
   end
-
-  def initialize
-    @features = {}
-    @loader_task = Concurrent::TimerTask.new(get_loader_opts()) { @features = Loader.call() }
-    @loader_task.add_observer(Observer.new)
-    @loader_task.execute
-  end
-
-  def get_features
-    @features
-  end
-
-  def update_features(&block)
-    raise("This source cannot be updated")
-  end
-
-  def log_resolution(feature, meta, resolution)
-    # todo
-  end
-
-  private
-
-  def get_loader_opts
-    {
-      execution_interval: 60,
-      run_now: true,
-    }
-  end
-end
 end
