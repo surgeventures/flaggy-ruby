@@ -31,7 +31,12 @@ This is the default source in case no configuration was provided.
 ```ruby
 Flaggy.configure do |config|
   config.source = {
-    type: :memory
+    type: :memory,
+    initial_features: {
+      "my_feature" => {
+        "enabled" => true
+      }
+    }
   }
 end
 ```
@@ -46,7 +51,6 @@ Loads definition from JSON file. It's most useful for development.
 Flaggy.configure do |config|
   config.source = {
     type: :json,
-    eager_load: false,
     file: "path/to/definition.json"
   }
 end
