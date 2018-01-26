@@ -13,6 +13,10 @@ class << self
     get_type_instance().update_features(&block)
   end
 
+  def reset
+    @type_instance = nil
+  end
+
   def get_type_instance
     @type_instance ||= get_type_class().new
   end

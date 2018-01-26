@@ -30,6 +30,10 @@ class << self
     block.call(new_config)
 
     @config = new_config
+
+    Source.reset
+
+    @config
   end
 
   def config
