@@ -36,5 +36,13 @@ class << self
   def config
     @config ||= Config.new
   end
+
+  def logger
+    @logger ||= begin
+      Logger.new($stdout).tap do |log|
+        log.progname = 'flaggy'
+      end
+    end
+  end
 end
 end

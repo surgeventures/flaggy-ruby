@@ -3,15 +3,42 @@ require 'json'
 
 module Flaggy
 class ProteinSource
+  class << self
+    def get_opts
+      Source.get_opts()
+    end
+
+    def get_app
+      get_opts().fetch(:app)
+    end
+
+    def get_refresh_interval
+      get_opts().fetch(:refresh_interval, 30_000) * 0.001
+    end
+
+    def push_resolution(feature, meta, resolution)
+      @resolutions ||= []
+      @resolutions.push([feature, meta, resolution])
+    end
+
+    def flush_resolutions
+      old_resolutions = @resolutions || []
+      @resolutions = []
+      old_resolutions
+    end
+  end
+
   def initialize
+    @features = {}
+    @resolutions = []
+
     transport_opts = Source.get_opts().fetch(:transport)
     adapter = transport_opts.fetch(:adapter)
     Client.transport(adapter, transport_opts)
 
-    @features = {}
-    @loader_task = Concurrent::TimerTask.new(get_loader_opts()) { @features = Loader.call() }
-    @loader_task.add_observer(Observer.new)
-    @loader_task.execute
+    manager_task = Concurrent::TimerTask.new(get_manager_opts()) { @features = ManagerTask.call() }
+    manager_task.add_observer(ManagerObserver.new)
+    manager_task.execute
   end
 
   def get_features
@@ -23,29 +50,16 @@ class ProteinSource
   end
 
   def log_resolution(feature, meta, resolution)
-    Client.push(LogResolution::Request.new(
-      app: get_app(),
-      feature: feature.to_s,
-      meta: JSON.dump(meta),
-      resolution: resolution
-    ))
-  end
-
-  def get_app
-    Source.get_opts().fetch(:app)
+    self.class.push_resolution(feature, meta, resolution)
   end
 
   private
 
-  def get_loader_opts
+  def get_manager_opts
     {
-      execution_interval: get_refresh_interval(),
+      execution_interval: self.class.get_refresh_interval(),
       run_now: true,
     }
-  end
-
-  def get_refresh_interval
-    Source.get_opts().fetch(:refresh_interval, 60_000) * 0.001
   end
 end
 end

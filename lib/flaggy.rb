@@ -14,8 +14,8 @@ require "flaggy/sources/memory_source"
 if defined?(Protein)
   require "flaggy/sources/protein_source"
   require "flaggy/sources/protein_source/client"
-  require "flaggy/sources/protein_source/loader"
-  require "flaggy/sources/protein_source/observer"
+  require "flaggy/sources/protein_source/manager_task"
+  require "flaggy/sources/protein_source/manager_observer"
   require "flaggy/sources/protein_source/proto/get_features_pb"
   require "flaggy/sources/protein_source/proto/log_resolution_pb"
 end
