@@ -5,11 +5,13 @@ class << self
 
     feature_string = feature_symbol.to_s
     features = Source.get_features()
-
     feature_def = features[feature_string]
     return false unless feature_def
+    return false unless feature_def.key?("enabled") || feature_def.key?("rules")
 
-    resolution = feature_def["enabled"] ? true : Rule.satisfied?(feature_def.fetch("rules"), meta)
+    enabled = feature_def["enabled"]
+    rules = feature_def["rules"]
+    resolution = enabled.nil? ? Rule.satisfied?(rules, meta) : enabled
     Source.log_resolution(feature_symbol, meta, resolution)
 
     resolution
